@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 
-class synthesizer extends Component{
-    constructor(){
 
-    }
-}
-
-
-class synth extends Component{
+class Synthesizer extends Component{
     constructor(context, props){
         super(props);
 
@@ -53,11 +47,6 @@ class synth extends Component{
     }
 }
 
-
-
-
-
-
 class OscillatorModule extends Component{
     /*Oscillator group is the audio source module web synthesizer. The class contains three oscillators.
     */
@@ -65,51 +54,62 @@ class OscillatorModule extends Component{
          //context = audioContext from web audio api
         super(props);
         this.context = this.props.context;
-        this.gainNode = this.context.createGain();
-        this.merge = this.context.createChannelMerger(3);
-        this.osc1.connect(this.merge,1,0);
-        this.osc2.connect(this.merge,1,1);
-        this.osc3.connect(this.merge,1,2);
-        this.merge.connect(this.gainNode);
-        this.state = {
-            osc1Type: 'sine',
-            osc2Type: 'sine',
-            osc3Type: 'sine',
-        }
-        this.setWave = this.setWave.bind(this);
+        this.init(); //Instantiates 
     }
-    setWave(wave,osc){
-        switch (osc){
-            case "osc1":
-            this.osc1.setWave(wave);
-            break;
-            case "osc2":
-            this.osc2.setWave(wave);
-            break;
-            case "osc3":
-            this.osc3.setWave(wave);
-            break;
-        }
-    }
-    setGain(osc1Vol, osc2Vol, osc3Vol){
-        //Should be a percentage, where function maps 
-        this.osc1.setVolume(osc1Vol);
-        this.osc2.setVolume(osc2Vol);
-        this.osc3.setVolume(osc3Vol);
-    }
+    init(){
+        //creates gains 
+        this.gainNode1 = this.context.createGain();
+        this.gainNode2 = this.context.createGain();
+        this.gainNode3 = this.context.createGain();
+        this.gainNode4 = this.context.createGain();
+        this.finalGainNode = this.context.createGain();
+        this.finalGainNode.channelCount = 1;
+        this.finalGainNode.channelCountMode = "explicit";
+        this.finalGainNode.channelInterpretation = "speakers";
+        this.merge = this.context.createChannelMerger(2);
+        this.merge2 = this.context.createChannelMerger(2);
+        this.merge3 = this.context.createChannelMerger(2);
+        //this.merge.channelCount = 1;
+        //this.merge.
+        this.gainNode1.connect(this.merge, 0, 0);
+        this.gainNode2.connect(this.merge, 0, 1);
+        this.merge.connect(this.merge3,0,0);
+        
+        this.gainNode3.connect(this.merge2, 0, 0);
+        this.gainNode4.connect(this.merge2, 0, 1);
+        this.merge2.connect(this.merge3,0,1);
 
+        this.merge3.connect(this.finalGainNode);
+        this.finalGainNode.connect(this.props.outputNode);
+    }
     getlastNode(){
         return this.merge;
     }
 
-    play(value, time){
-        this.refs.osc1Child.play(value, time);
-        this.refs.osc2Child.play(value, time);
-        this.refs.osc3Child.play(value, time);
+    setVolume(osc1, osc2, osc3, osc4){
+        this.gainNode1.gain.value = osc1;
+        this.gainNode2.gain.value = osc2;
+        this.gainNode3.gain.value = osc3;
+        this.gainNode4.gain.value = osc3;
+    }
+
+    changeNote(value){
+        this.refs.osc1Child.changeNote(value);
+        this.refs.osc2Child.changeNote(value);
+        this.refs.osc3Child.changeNote(value);
+        this.refs.osc4Child.changeNote(value);
     }
 
     stop(time){
-        
+        this.refs.osc1Child.stop(time);
+        this.refs.osc2Child.stop(time);
+        this.refs.osc3Child.stop(time);
+        this.refs.osc4Child.stop(time);
+    }
+
+    getOsc(){
+        //return oscillator
+        return this.merge;
     }
 
     render(){
@@ -118,23 +118,29 @@ class OscillatorModule extends Component{
                 <Oscillator 
                     id={"osc1"}
                     ref="osc1Child"
-                    nextNode={this.merge}
-                    onPress={this.play}
-                    onRelease={this.stop}
+                    context={this.props.context}
+                    outputNode={this.gainNode1}
                 />
 
                 <Oscillator 
                     id={"osc2"}
                     ref="osc2Child"
-                    onPress={this.play}
-                    onRelease={this.stop}
+                    context={this.props.context}
+                    outputNode={this.gainNode2}
                 />
 
                 <Oscillator 
                     id={"osc3"}
-                    ref="osc1Child"
-                    onPress={this.play}
-                    onRelease={this.stop}
+                    ref="osc3Child"
+                    context={this.props.context}
+                    outputNode={this.gainNode3}
+                />
+
+                <Oscillator 
+                    id={"osc4"}
+                    ref="osc3Child"
+                    context={this.props.context}
+                    outputNode={this.gainNode4}
                 />
             </div>
         );
@@ -155,27 +161,35 @@ class envelopeGroup extends Component{
 }
 
 class Oscillator extends Component{
-    //oscillator class encapsulates states associated to individual oscillator
-    //Requires audio node of where to connect oscillator to and contains functions
-    //to be called by the parent class OscillatorModule
+    //oscillator class encapsulates states associated to individual oscillator.
+    //Requires AudioContext() and the outputNode to connect oscillator to be passed through props.
     constructor(props){
         super(props)
         this.state = {
-            //context is audioContext created using the Web Audio API.
-            oscType : 'sine',
-            //need to know where to connect oscillator. 
-            nextNode: props.nextNode,
-            isOn: false,
+            context: props.context,
+            oscType : 'sine', //sets initial wave form of oscillator.
+            outputNode: props.outputNode,
+            freq: '440',
         };
-        this.osc = props.context.createOscillator();
+        this.init();
+    }
+    init(){
+        //creates the oscillator
+        this.osc = this.state.context.createOscillator();
+        //sets wave type to be sine wave
         this.osc.type = this.state.oscType;
-        this.osc.connect(props.nextNode);
-        //this.osc.start(props.context.currentTime);
+        //set oscillator frequnecy
+        this.osc.frequency.value = this.state.freq;
+        //Output node is the node oscillator connects to.
+        this.osc.connect(this.state.outputNode);
+        //starts oscillator at time 0.
+        this.osc.start(0);
     }
 
     setWave(wave){ 
         //sets the wave type of the oscillator
         this.setState({oscType: wave});
+        this.osc.type = wave;
     }
 
     getOscillator(){
@@ -183,30 +197,26 @@ class Oscillator extends Component{
         return this.osc;
     }
 
-    play(value){ 
-    //value = pitch of note, time = 
-        this.state.isOn = true;
-        this.init();
+    changeNote(value){ 
         this.osc.frequency.value = value;
-        //this.gainNode.gain.setValueAtTime(1, this.props.context.currentTime);
+        this.state.freq = value;
     }
 
-
     stop(time) {
-        //this.gainNode.gain.exponentialRampToValueAtTime(0.005, time + 1);
+        //stops the oscillator when needed
         this.osc.stop(time + 1);
     }
 
     render(){
         return(
-            <div id = {this.props.id}>
+            <div className="oscillator" id = {this.props.id}>
+                {this.state.oscType}
                 <div className="Wave-form">
                     <button onClick={this.setWave.bind(this, 'sine')}>Sine</button>
                     <button onClick={this.setWave.bind(this, 'square')}>Square</button>
                     <button onClick={this.setWave.bind(this, 'sawtooth')}>Saw</button>
                     <button onClick={this.setWave.bind(this, 'triangle')}>Triangle</button>
                 </div>
-                {this.state.oscType}
                 <div className="Pitch-control">
                     <div className="pitchKnob"></div>
                 </div>
@@ -227,7 +237,7 @@ class envelope extends Component{
             attack: 0,
             decay: 0,
             sustain: 1,
-            rlse: 0,
+            release: 0,
         };
     }
 }
@@ -236,8 +246,6 @@ class lfo{
     //Frequency of low frequency oscillator
     constructor(context){
         this.osc = context.createOscillator();
-        this.analyser = this.context.createAnalyser();
-        this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
     }
     setWave(wave){ 
     //sets the wave type of the oscillator
@@ -267,7 +275,6 @@ class filter{
 }
 
 
-export default Oscillator;
-// export default oscillatorGroup;
+export default OscillatorModule;
 // export default synth;
 
