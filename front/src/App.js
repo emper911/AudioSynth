@@ -28,8 +28,8 @@ class App extends Component {
     
   }
 
-  buttonHandler(e){
-    this.refs.oscModule.changeNote(440, 0);
+  buttonHandler(val){
+    this.refs.oscModule.changeNote(val, 0);
   }
 
   render() {
@@ -42,7 +42,15 @@ class App extends Component {
           context={this.state.context}
           outputNode={this.state.context.destination}
         />
-        <button onClick={(e) => this.buttonHandler(e)}>Play Sound!</button>
+        <button onClick={this.buttonHandler.bind(this,261.63)}>C</button>
+        <button onClick={this.buttonHandler.bind(this,293.66)}>D</button>
+        <button onClick={this.buttonHandler.bind(this,329.63)}>E</button>
+        <button onClick={this.buttonHandler.bind(this,349.23)}>F</button>
+        <button onClick={this.buttonHandler.bind(this,392.00)}>G</button>
+        <button onClick={this.buttonHandler.bind(this,440.00)}>A</button>
+        <button onClick={this.buttonHandler.bind(this,493.88)}>B</button>
+        <button onClick={this.buttonHandler.bind(this,523.25)}>C</button>
+
       </div>
     );
   }

@@ -57,33 +57,42 @@ class OscillatorModule extends Component{
         this.init(); //Instantiates 
     }
     init(){
-        //creates gains 
+        //creates gainNodes for 4 oscillators
         this.gainNode1 = this.context.createGain();
         this.gainNode2 = this.context.createGain();
         this.gainNode3 = this.context.createGain();
         this.gainNode4 = this.context.createGain();
+        //Final gain node before output connection
         this.finalGainNode = this.context.createGain();
+        //sets the output to mono
         this.finalGainNode.channelCount = 1;
         this.finalGainNode.channelCountMode = "explicit";
+        //interprets down-mixing from input
         this.finalGainNode.channelInterpretation = "speakers";
+
+        //merges osc1 and osc2
         this.merge = this.context.createChannelMerger(2);
+        //merges osc3 and osc4
         this.merge2 = this.context.createChannelMerger(2);
+        //merges merge and merge2
         this.merge3 = this.context.createChannelMerger(2);
-        //this.merge.channelCount = 1;
-        //this.merge.
+
+        //connects osc1 and osc2 gains and merges them to merge
         this.gainNode1.connect(this.merge, 0, 0);
         this.gainNode2.connect(this.merge, 0, 1);
         this.merge.connect(this.merge3,0,0);
-        
+        //connects osc3 and osc4 gains and merges them to merge2
         this.gainNode3.connect(this.merge2, 0, 0);
         this.gainNode4.connect(this.merge2, 0, 1);
+        //connects merge and merge 2 together to merge3
         this.merge2.connect(this.merge3,0,1);
-
+        //connects to final gainNode
         this.merge3.connect(this.finalGainNode);
+        //connects to output node passed by props
         this.finalGainNode.connect(this.props.outputNode);
     }
     getlastNode(){
-        return this.merge;
+        return this.finalGainNode;
     }
 
     setVolume(osc1, osc2, osc3, osc4){
@@ -138,7 +147,7 @@ class OscillatorModule extends Component{
 
                 <Oscillator 
                     id={"osc4"}
-                    ref="osc3Child"
+                    ref="osc4Child"
                     context={this.props.context}
                     outputNode={this.gainNode4}
                 />
