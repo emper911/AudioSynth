@@ -5,42 +5,31 @@ import Knob from './Knob1';
 class SynthesizerRender extends Component {
     constructor(props){
         super(props);
+        
     }
     render(){
         return (
             <div className="synthesizer">
                 <OscillatorModuleRender
-                    oscHandler={this.props.oscHandler}
-                    handleChange={this.props.handleChange}
-                    value={this.props.value}
-                    patch={this.props.patch.oscMod}
+
                 />
                 <EnvelopeModuleRender
-                    envelopeHandler={this.props.envelopeHandler}
-                    handleChange={this.props.handleChange}
-                    value={this.props.value}
-                    patch={this.props.patch.envMod}
+
                 />
                 <FilterModuleRender 
-                    filterHandler={this.props.filterHandler}
+
                 />
                 <LfoModuleRender 
-                    lfoHandler={this.props.lfoHandler}
-                    handleChange={this.props.handleChange}
-                    value={this.props.value}
+
                 />
                 <LofiModuleRender 
-                    lofiHandler={this.props.lofiHandler}
-                    handleChange={this.props.handleChange}
-                    value={this.props.value}
+
                 />
                 <GlobalModuleRender 
-                    globalHandler={this.globalHandler}
-                    handleChange={this.props.handleChange}
-                    value={this.props.value}
+
                 />
                 <WaveVisualizerModuleRender 
-                    visualizerHandler={this.props.visualizerHandler}
+
                 />
                 <KeyboardModuleRender
                     
