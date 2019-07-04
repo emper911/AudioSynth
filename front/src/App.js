@@ -5,38 +5,32 @@ import Synthesizer from './synth/synthesizer.js';
 // import Tone from 'tone';
 
 class App extends Component {
-//   constructor(props){
-//     super(props);
-//     // var synth = new Tone.Synth().toMaster()
-//     // //play a 'C' for one 8th note
-//     // synth.triggerAttackRelease('C4', '8n')
+    constructor(props){
+        super(props);
 
-//     // this.handleChange = this.handleChange.bind(this);
-//   }
-
-  render(){
-    return (
+        this.AudioOut = this.AudioOut.bind(this);
+    }
+    //function is sent to midi controller
     
-      <div className="App">
-        <h1>Mr. Monofone</h1>
-        <Synthesizer/>
-        {/* <MidiInput/> */}
-        {/* <AudioVisualizer/> */}
-        
-      </div>
-    );
-}
+
+    AudioOut(){
+
+    }
+
+
+    render(){
+        return (
+            <div className="App">
+                <h1>Mr. Polyfone</h1>
+                <Synthesizer
+                    AudioOut={this.AudioOutHandler}
+                />
+                
+                {/* <AudioVisualizer/> */}
+                
+            </div>
+        );
+    }
 }
 
 export default App;
-
-/* <SynthesizerRender 
-  oscHandler={this.oscHandler}
-  envelopeHandler={this.envelopeHandler}
-  filterHandler={this.filterHandler}
-  lfoHandler={this.lfoHandler}
-  globalHandler={this.globalHandler}
-  lofiHandler={this.lofiHandler}
-  patch={this.state}
-  handleChange={this.handleChange}
-/> */

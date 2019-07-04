@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import Knob from './knobs';
 
 
 class OscillatorModule extends Component {
-    constructor(props){
-        super(props);
-    }
+    // constructor(props){
+    //     super(props);
+    // }
 
     /************************************************************************************
     *******************************Oscillator Render Methods******************************
@@ -20,14 +21,14 @@ class OscillatorModule extends Component {
                         oscHandler={this.props.oscHandler}
                     />
 
-                    <OscillatorRender 
+                    {/* <OscillatorRender 
                         id={"osc2"}
                         oscHandler={this.props.oscHandler}
                     />
                     <OscillatorRender 
                         id={"osc3"}
                         oscHandler={this.props.oscHandler}
-                    />
+                    /> */}
                 </div>
                 <div className="three-mixer">
                 </div>
@@ -39,28 +40,28 @@ class OscillatorModule extends Component {
 }
 
 function OscillatorRender(props){
-    
+
     return(
-        <div className="oscillator" id = {props.id}>
-            <div className="detune-control">
+        <div className="oscillator-controls" id = {props.id}>
+            <div className="oscillator-detune knob-component">
+                <h4>Detune:</h4>
                 <Knob
-                        className="detuneKnob"
-                        height={50}
-                        width={50}
-                        angleOffset={30}
-                        angleArc={260}
-                        min={1}
+                        id={props.id}
+                        className="detune"
+                        min={0}
                         max={100}
-                        displayInput={true}
-                        value={props.value}
-                        onChange={props.handleChange}
+                        value={0}
+                        onChange={props.oscHandler}
                     />
             </div>
-            <div className="Wave-form">
-                <button onClick={() => props.setWave(props.id, 'sine')}>Sine</button>
-                <button onClick={() => props.setWave(props.id,'square')}>Square</button>
-                <button onClick={() => props.setWave(props.id,'sawtooth')}>Saw</button>
-                <button onClick={() => props.setWave(props.id,'triangle')}>Triangle</button>
+            <div className="oscillator-waveform">
+                <h4>Wave:</h4>
+                <div className="oscillator-waveform-buttons"> 
+                    <button onClick={() => props.oscHandler({'id' : props.id, 'param':'type', 'value': 'sine'})}>Sine</button>
+                    <button onClick={() => props.oscHandler({'id' : props.id, 'param':'type', 'value': 'square'})}>Square</button>
+                    <button onClick={() => props.oscHandler({'id' : props.id, 'param':'type', 'value': 'sawtooth'})}>Saw</button>
+                    <button onClick={() => props.oscHandler({'id' : props.id, 'param':'type', 'value': 'triangle'})}>Triangle</button>
+                </div>
             </div>
         </div>
     );
