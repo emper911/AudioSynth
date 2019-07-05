@@ -8,7 +8,7 @@ class LfoModule extends Component {
 
     render(){
         return (
-            <div>
+            <div className="lfo-module module">
                 <Lfo
                     id="lfo1"
                     lfoHandler={this.props.lfoHandler}
@@ -32,43 +32,55 @@ function Lfo(props) {
         *    - routing group : gain knob and routing option buttons
         */
     return (
-            <div className="lfo-module">
+            <div className="lfo-group">
                 <h3>LFO</h3>
-                <div className="lfo-wave-group lfo-group ">
-                    <div className="lfo-wave-frequency knob-component">
+                <div className="lfo-controls">
+                    <div className="lfo-frequency">
                         <h4>Frequency:</h4>
                         <Knob
                             id={props.id}
                             className="frequency"
-                            min={1}
-                            max={100}
-                            value= {10}
+                            min={50}
+                            max={10000}
+                            value= {200}
+                            step={0.1}
                             onChange={props.lfoHandler}
                         />
                     </div>
-                    <div className="lfo-wave-form">
-                        <button onClick={() => props.lfoHandler({'id' : props.id, 'type' : 'sine'})}>Sine</button>
-                        <button onClick={() => props.lfoHandler({'id' : props.id, 'type' : 'square'})}>Square</button>
-                        <button onClick={() => props.lfoHandler({'id' : props.id, 'type' : 'sawtooth'})}>Saw</button>
-                        <button onClick={() => props.lfoHandler({'id' : props.id, 'type' : 'triangle'})}>Triangle</button>
+
+                    <div className="lfo-intensity">
+                        <h4>Intensity:</h4>
+                        <Knob
+                            id={props.id}
+                            className="amplitude"
+                            min={-100}
+                            max={100}
+                            value={0}
+                            step={0.01}
+                            onChange={props.lfoHandler}
+                        />
                     </div>
-                </div>
-                <div className="lfo-routing-group lfo-group">
-                    {/* <Knob
-                        id={props.id}
-                        className="gain"
-                        min={1}
-                        max={100}
-                        value= {10}
-                        onChange= {props.lfoHandler}
-                    /> */}
-                    <h4>Routing:</h4>
-                    <div className="routing">
-                        <button onClick={() => props.lfoHandler({'routing':'pitch'})}>Pitch</button>
-                        <button onClick={() => props.lfoHandler({'routing':'cutoff'})}>Cutoff</button>
-                        <button onClick={() => props.lfoHandler({'routing':'mix'})}>Mix</button>
-                        <button onClick={() => props.lfoHandler({'routing':'volume'})}>Volume</button>
+
+                    <div className="lfo-wavetype">
+                        <h4>wave-type:</h4>
+                        <div className="lfo-wavetype-buttons">
+                            <button onClick={() => props.lfoHandler({ 'id' : props.id, 'param': 'type', 'value' : 'sine'})}>Sin</button>
+                            <button onClick={() => props.lfoHandler({ 'id' : props.id, 'param': 'type', 'value' : 'square'})}>Sqr</button>
+                            <button onClick={() => props.lfoHandler({ 'id' : props.id, 'param': 'type', 'value' : 'sawtooth'})}>Saw</button>
+                            <button onClick={() => props.lfoHandler({ 'id' : props.id, 'param': 'type', 'value' : 'triangle'})}>Tri</button>
+                        </div>
                     </div>
+
+                    <div className="lfo-routing"> 
+                        <h4>Routing:</h4>
+                        <div className="routing">
+                        <button onClick={() => props.lfoHandler({ 'id': props.id, 'param': 'routing', 'value':'pitch'})}>Ptch</button>
+                        <button onClick={() => props.lfoHandler({ 'id': props.id, 'param': 'routing', 'value':'cutoff'})}>Cut</button>
+                        {/* <button onClick={() => props.lfoHandler({ 'id': props.id, 'param': 'routing', 'value':'volume'})}>Vol</button> */}
+                        {/* <button onClick={() => props.lfoHandler({ 'id': props.id, 'param': 'routing', 'value':'mix'})}>Mix</button> */}
+                        </div>
+                    </div>
+
                 </div>
             </div>
         );

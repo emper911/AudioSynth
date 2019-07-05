@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Tone from 'tone';
+import AudioVisualizer from '../visualizer/audiovisualizer';
 
 //Custom React Components
 import MidiController from '../midicontroller';
@@ -15,121 +16,317 @@ class Synthesizer extends Component{
     //Synthesizer class will hold all synth modules together
     constructor(props){
         super(props);
-        //synth related mapping
+        //synth parameter handler
         this.oscHandler = this.oscHandler.bind(this);
         this.envHandler = this.envHandler.bind(this);
         this.filterHandler = this.filterHandler.bind(this);
         this.lfoHandler = this.lfoHandler.bind(this);
         this.masterHandler = this.masterHandler.bind(this);
-        //midi input related
+        //Input handlers
         this.MidiHandler = this.MidiHandler.bind(this);
+        this.musicalTypingTrigger = this.musicalTypingTrigger.bind(this);
+
+
+    }
+/*******************************************************************************************
+**********************************Component Initialization**********************************
+********************************************************************************************/
+
+    //This component does not update on a parent state change
+    shouldComponentUpdate() {
+        return false;
+    }
+    //After react render, the component is instantiates the polysynth
+    componentDidMount() {
+        this.octave = 1;
+        document.addEventListener("keydown", this.musicalTypingTrigger, false);
+        document.addEventListener("keyup", this.musicalTypingTrigger, false);
+        //instantiating the polysynth
+        this.initPolySynth();
+    }
+    componentWillUnmount() {
+        this.PolySynth.disconnect();
     }
 
-    //Synth Component Handlers
+    initPolySynth() {
+        this.PolySynth = new Tone.PolySynth(12, Tone.MonoSynth);
+        this.PolySynth.set({
+            "frequency": 440,
+            "detune": 0,
+            "oscillator": {
+                "type": "sawtooth"
+            },
+            "filter": {
+                "Q": 0,
+                "type": "allpass"
+            },
+            "envelope": {
+                "attack": 0.1,
+                "releasse": 0.1
+            },
+            "filterEnvelope": {
+                "attack": 0.1,
+                "decay": 0.1,
+                "sustain": 0,
+                "release": 0.1,
+                "baseFrequency": 200,
+                "octaves": 7,
+                "exponent": 0
+            }
+        });
+        this.lfo1 = new Tone.LFO({
+            "type": "sine",
+            "min": -1200,
+            "max": 1200,
+            "frequency": 400,
+            "amplitude": 1,
+        });
+        // this.lfo1.connect(this.PolySynth.detune);
+
+
+        this.filter1 = new Tone.Filter(500, "allpass");
+        this.filter2 = new Tone.Filter(500, "allpass");
+        this.filter3 = new Tone.Filter(500, "allpass");
+        this.filterEnv = new Tone.FrequencyEnvelope({
+            "baseFrequency" : 200,
+            "octave": 4
+        });
+        
+        this.filterEnv.fan(this.filter1.frequency, this.filter2.frequency, this.filter3.frequency);
+        
+        this.prevLfo1 = "pitch";
+        this.lfo1.connect(this.PolySynth.detune);
+        
+        this.PolySynth.connect(this.filter1);
+        this.filter1.connect(this.filter2);
+        this.filter2.connect(this.filter3);
+        this.filter3.toMaster();
+
+
+    }
+
+    
+
+/******************************************************************************************
+****************************************Synth Component Handlers*************************************
+*******************************************************************************************/
     oscHandler(update){
-        let oscParam = {};
+        //Handles user input from the oscillator component
+        /*
+        Must use weird syntax to represent parameter changes properly.
+        The below is the same representation as the code:
+
+        let oscParam = {
+            "oscillator": {
+                update.param : update.value
+            }
+        }
+        */
+        let oscParam = {}; 
         oscParam["oscillator"] = {};
         oscParam["oscillator"][update.param] = update.value;
         this.PolySynth.set(oscParam);
     }
 
     envHandler(update){
-        let envParam = {};
-        envParam[update.id] = {} //envelope type filter or amp
-        envParam[update.id][update.param] = update.value; //class = attack, decay, etc.
-        this.PolySynth.set(envParam);
+        if (update.id === "envelope"){
+            let envParam = {};
+            envParam[update.id] = {} //update.id is envelope type: filterEnv or ampEnv
+            envParam[update.id][update.param] = update.value; //param = attack, decay, etc.
+            this.PolySynth.set(envParam);
+        }
+        else if(update.id === "filterEnvelope"){
+            this.filterEnv[update.param] = update.value;
+        }
     }
 
     filterHandler(update){
-        let filterParam = {};
-        filterParam["filter"] = {};
-        filterParam["filter"][update.param] = update.value; //class="filterattribute"
-        this.PolySynth.set(filterParam); 
+        if (update.id === "Filter1"){
+            if (update.param === "type" || update.param === "rolloff") {
+                this.filter2[update.param] = update.value;
+            }
+            else {
+                this.filter2[update.param].value = update.value;
+            }
+            // let filterParam = {};
+            // filterParam["filter"] = {};
+            // filterParam["filter"][update.param] = update.value; //class="filterattribute"
+            // this.PolySynth.set(filterParam); 
+        }
+        else if(update.id === "Filter2"){
+            if (update.param === "type" || update.param === "rolloff"){
+                this.filter2[update.param] = update.value;
+            }
+            else {
+                this.filter2[update.param].value = update.value;
+            }
+        }
+        else{
+            if (update.param === "type" || update.param === "rolloff") {
+                this.filter3[update.param] = update.value;
+            }
+            else {
+                this.filter3[update.param].value = update.value;
+            }
+        }
     }
-
     lfoHandler(update){
-        console.log(update);
+        if (update.param === "frequency" || update.param === "amplitude"){
+            this.lfo1[update.param].value = update.value;
+        }
+        else if (update.param === "routing"){
+            
+            if (update.value === "pitch" && this.prevLfo1 !== "pitch"){
+                this.lfo1.disconnect();
+                this.lfo1.connect(this.PolySynth.detune);
+                this.prevLfo1 = "pitch";
+            }
+            else if (update.value === "cutoff" && this.prevLfo1 !== "cutoff") {
+                this.lfo1.disconnect();
+                this.lfo1.fan(this.filter1.frequency, this.filter2.frequency, this.filter3.frequency)
+                this.prevLfo1 = "cutoff";
+            }
+            // else if (update.value === "volume") {
+            //     this.PolySynth.
+            // }
+        }
+        // console.log(update+this.prevLfo1);
     }
 
     masterHandler(update){
         this.PolySynth.set("volume", update.value);
-        console.log(this.PolySynth.get("oscillator.frequency").oscillator.frequency);
     }
 
-    //
-    shouldComponentUpdate(){
-        return false;
-    }
-    
 
-    componentDidMount(){
-        this.PolySynth = new Tone.PolySynth(6, Tone.MonoSynth);
-        this.PolySynth.set({
-            "frequency"  : 440,
-            "detune"  : 0 ,
-            "oscillator"  : {
-                "type"  : "sawtooth"
-            },
-            "filter" : {
-                "Q"  : 6 ,
-                "type"  : "lowpass" ,
-                "rolloff"  : -24
-            } ,
 
-            "envelope": {
-                "attack" : 0.2,
-                "releasse": 1.0
-            },
-            "filterEnvelope": {
-                "attack"  : 0.06 ,
-                "decay"  : 0.2 ,
-                "sustain"  : 0.5 ,
-                "release" : 2 ,
-                "baseFrequency" : 200 ,
-                "octaves" : 7,
-                "exponent" : 2
-            }
-        });
-        this.lfo1 = new Tone.LFO("4n", 400, 4000);
-        // this.lfo1.connect(this.PolySynth.detune);
-        
+/*****************************************************************************************
+****************************************Tonal Handlers************************************
+******************************************************************************************/
 
-        // this.AmpEnv = new Tone.AmplitudeEnvelope();
-        // this.filterEnv = new Tone.;
-
-         // this.LFO = new Tone.;
-
-        this.HPfilter = new Tone.Filter(500, "highpass");
-        this.LPfilter = new Tone.Filter(700, "lowpass");
-
-        this.PolySynth.connect(this.HPfilter);
-        this.HPfilter.connect(this.LPfilter);
-        this.LPfilter.toMaster();
-
-    }
-
-    componentWillUnmount(){
-        this.PolySynth.disconnect();
-    }
-    //midi handling
+    //midi input handler
     MidiHandler(data){
+        //handles midi input data sent from the midi controller component
         if (data.status === "on"){
-            this.PolySynth.triggerAttack(data.note);
+            this.PolySynth.triggerAttack(data.note,undefined, data.velocity);
+            this.filterEnv.triggerAttack(undefined, data.velocity);
         }
         else if (data.status === "off"){
-            this.PolySynth.triggerRelease(data.note);
+            this.PolySynth.triggerRelease(data.note, undefined, data.velocity);
+            this.filterEnv.triggerRelease(undefined, data.velocity);
+        }
+    }
+    //
+    musicalTypingTrigger(note){
+        //used for musical typing on a keyboard
+        var pitch = "";
+        var valid = false; //within defined mapping from keyboard to pitch
+        switch(note.key){ //maps keyboard values to a pitch
+            case "a":
+                pitch = "c" + this.octave;
+                valid = true;
+                break;
+            case "w":
+                pitch = "c#" + this.octave;
+                valid = true;
+                break;
+            case "s":
+                pitch = "d" + this.octave;
+                valid = true;
+                break;
+            case "e":
+                pitch = "d#" + this.octave;
+                valid = true;
+                break;
+            case "d":
+                pitch = "e" + this.octave;
+                valid = true;
+                break;
+            case "f":
+                pitch = "f" + this.octave;
+                valid = true;
+                break;
+            case "t":
+                pitch = "f#" + this.octave;
+                valid = true;
+                break;
+            case "g":
+                pitch = "g" + this.octave;
+                valid = true;
+                break;
+            case "y":
+                pitch = "g#" + this.octave;
+                valid = true;
+                break;
+            case "h":
+                pitch = "a" + this.octave;
+                valid = true;
+                break;
+            case "u":
+                pitch = "a#" + this.octave;
+                valid = true;
+                break;
+            case "j":
+                pitch = "b" + this.octave;
+                valid = true;
+                break;
+            case "k":
+                pitch = "c" + (this.octave + 1);
+                valid = true;
+                break;
+            case "o":
+                pitch = "c#" + (this.octave + 1);
+                valid = true;
+                break;
+            case "l":
+                pitch = "d" + (this.octave + 1);
+                valid = true;
+                break;
+            case "p":
+                pitch = "d#" + (this.octave + 1);
+                valid = true;
+                break;
+            case ";":
+                pitch = "e" + (this.octave + 1);
+                valid = true;
+                break;
+            case "'":
+                pitch = "f" + (this.octave + 1);
+                valid = true;
+                break;
+            default:
+                break;
+        }
+        
+        if (note.type === "keydown"){ //key down event
+            if( note.key === "z" && (this.octave >= -3)) //change octaves. limit to -3
+                this.octave--;
+            else if (note.key === "x" && (this.octave <= 3)) //change octaves. limit to 3
+                this.octave++;
+                
+            if (valid){ //if not octave changing keys
+                this.PolySynth.triggerAttack(pitch);
+                // this.filterEnv.triggerAttack(pitch);
+            }
+        }
+
+        else if (note.type === "keyup" && valid){
+            this.PolySynth.triggerRelease(pitch);
+            // this.filterEnv.triggerRelease(pitch);
         }
     }
 
 
-    buttonTrigger(note, length){
-        this.PolySynth.triggerAttackRelease(note, "16n");
-    }
-
+/*********************************************************************************
+****************************************Render************************************
+**********************************************************************************/
 
     render() {
         return (
-            <div className="monosynth" ref="polysynth" id="poly">
+            <div className="poly-synth" ref="polysynth" id="poly">
+                <MidiController
+                    MidiOutput={this.MidiHandler}
+                />
+                
                 <OscillatorModule
                     oscHandler={this.oscHandler}
                 />
@@ -145,19 +342,8 @@ class Synthesizer extends Component{
                 <MasterModule
                     masterHandler={this.masterHandler}
                 />
-                
-                <button onClick={() => this.buttonTrigger("C3", "16n")}>C</button>
-                <button onClick={() => this.buttonTrigger("D3", "16n")}>D</button>
-                <button onClick={() => this.buttonTrigger("E3", "16n")}>E</button>
-                <button onClick={() => this.buttonTrigger("F3", "16n")}>F</button>
-                <button onClick={() => this.buttonTrigger("G3", "16n")}>G</button>
-                <button onClick={() => this.buttonTrigger("A3", "16n")}>A</button>
-                <button onClick={() => this.buttonTrigger("B3", "16n")}>B</button>
-                <button onClick={() => this.buttonTrigger("C4", "16n")}>C</button>
 
-                <MidiController
-                    MidiOutput={this.MidiHandler}
-                />
+                <AudioVisualizer />
             </div>
 
         );

@@ -15,46 +15,50 @@ class MidiController extends Component{
         var MidiOutput = this.props.MidiOutput;
         //tries to connect
         WebMidi.enable(function (err){
-            console.log(this);
             if (err) {
                 console.log("WebMidi could not be enabled.", err);
             } 
             else {
                 // Retrieve an input by name, id or index
-                var input = WebMidi.getInputByName("nanoKEY2 KEYBOARD");
-                // this.refs.status.text = "Midi is Connected";
+                if (WebMidi.inputs.length > 0){
+                    // console.log(WebMidi.inputs);
+                    var input = WebMidi.getInputByName(WebMidi.inputs[0].name);
+                    // this.refs.status.text = "Midi is Connected";
 
-                // Listen for a 'note on' message on all channels
-                input.addListener('noteon', "all",
-                    function (e) {
-                        MidiOutput({
-                            "note":e.note.name + e.note.octave,
-                            "status": "on"
-                        });
-                        // console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
-                    }
-                );
-                input.addListener('noteoff', "all",
-                    function (e) {
-                        MidiOutput({
-                            "note":e.note.name + e.note.octave,
-                            "status": "off"
-                        });
-                        // console.log("Received 'noteoff' message (" + e.note.name + e.note.octave + ").");
-                    }
-                );
-                console.log("WebMidi enabled!");
-                // console.log(WebMidi.inputs);
+                    // Listen for a 'note on' message on all channels
+                    input.addListener('noteon', "all",
+                        function (e) {
+                            // console.log(e);,
+                            MidiOutput({
+                                "note":e.note.name + e.note.octave,
+                                "velocity": e.velocity,
+                                "status": "on"
+                            });
+                            // console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
+                        }
+                    );
+                    input.addListener('noteoff', "all",
+                        function (e) {
+                            MidiOutput({
+                                "note":e.note.name + e.note.octave,
+                                "velocity": e.velocity,
+                                "status": "off"
+                            });
+                            // console.log("Received 'noteoff' message (" + e.note.name + e.note.octave + ").");
+                        }
+                    );
+                }
+                // console.log("WebMidi enabled!");
                 // console.log(WebMidi.outputs);
             }
               
-        });
+        }, true);
 
     }
     render(){
         return (
-            <div>
-                <p ref="status">web</p>
+            <div className="midi-controls">
+                {/* <p ref="selectController">web</p> */}
             </div>
         );
     }

@@ -1,20 +1,276 @@
-/* html{
+/***********************************************************************************
+*******************************Global Element Styling*******************************
+************************************************************************************/
+html, body, #root, .app{
+   margin: 0px;
+   height: 100%;
+   width: 100%;
+   /* position: fixed; */
+}
+/* .app{
+    height: 98%;
+} */
+body {
+    background-color: rgb(22, 22, 22);
+    color: rgb(230, 230, 230);
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-    height: 100%;
-  }
-  body{
-    padding: 0;
-    height: 100%;
-    margin-right: 3%;
-    margin-left: 2%;
-  }
-  #root, .App {
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    padding: 0;
-  }
-  
-  h1, h3{
+h1, h2, h3, h4, h5 {
     text-align: center;
-  } */
+}
+
+button{
+    background-color: rgb(58, 58, 58);
+    color: rgb(175, 175, 175);
+    border-color: rgb(58, 58, 58);
+}
+/* :active */
+
+
+
+/***********************************************************************************
+*******************************Synthesizer Styling**********************************
+************************************************************************************/
+.poly-synth {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 20% 20% 20% 20% 20%;
+    grid-gap: 10px 10px;
+    grid-template-areas: 
+    ". . midi . ."
+    "oscillator oscillator oscillator visual visual" 
+    "envelope envelope envelope lfo master"
+    "envelope envelope envelope . ."
+    "filter filter filter filter filter";
+}
+.module{
+    border-radius: 1%;
+    padding: 2%;
+    border: 1px solid rgb(58, 58, 58);
+    box-shadow: 3px 4px 3px 1px rgb(37, 37, 37);
+}
+/***********************************************************************************
+*******************************Midi-control Styling*********************************
+************************************************************************************/
+.midi-controls {
+    grid-area: midi;
+
+}
+
+/***********************************************************************************
+*******************************Audio Visual Styling*********************************
+************************************************************************************/
+.audio-visualizer {
+    grid-area: visual;
+
+}
+
+
+/***********************************************************************************
+*******************************Oscillator Styling***********************************
+************************************************************************************/
+
+.oscillator-module {
+    grid-area: oscillator;
+}
+
+.oscillator-controls {
+    display: grid;
+    grid-template-rows: 1;
+    grid-template-columns: auto auto;
+    grid-template-areas: 
+    "detune waveform";
+
+}
+.oscillator-detune {
+    grid-area: detune;
+    justify-self: center; 
+}
+.oscillator-waveform {
+    grid-area: waveform;
+    justify-self: center; 
+}
+.oscillator-waveform button:focus, .oscillator-waveform button:visited{
+    background-color: rgb(112, 112, 112);
+    color: rgb(175, 175, 175);
+    border-color: rgb(112, 112, 112);
+}
+
+/***********************************************************************************
+*******************************Envelope Styling*************************************
+************************************************************************************/
+.envelope-module {
+    grid-area: envelope;
+    display: grid;
+    grid-template-rows: 2;
+    grid-template-columns: auto ;
+    grid-template-areas: 
+    "ampEnv"
+    "filterEnv";
+}
+
+#envelope {
+    grid-area: ampEnv;
+}
+
+#filterEnvelope {
+    grid-area: filterEnv;
+}
+
+.envelope-knobs{
+    display: grid;
+    grid-template-rows: 1;
+    grid-template-columns: auto auto auto auto;
+    grid-template-areas: 
+    "attack decay sustain release";
+}
+.envelope-attack-knob{
+    grid-area: attack;
+    justify-self: center; 
+}
+.envelope-decay-knob{
+    grid-area: decay;
+    justify-self: center; 
+}
+.envelope-sustain-knob{
+    grid-area: sustain;
+    justify-self: center; 
+}
+.envelope-release-knob{
+    grid-area: release;
+    justify-self: center; 
+}
+
+/***********************************************************************************
+*******************************Filter Styling***************************************
+************************************************************************************/
+.filter-module {
+    grid-area: filter;
+    display: grid;
+    grid-template-rows: 1;
+    grid-template-columns: auto auto auto ;
+    grid-template-areas: 
+    "filter1 filter2 filter3";
+
+    /* padding-bottom: 2%; */
+}
+#filter1 { 
+    grid-area: filter1;
+}
+
+#filter2 {
+    grid-area: filter2;
+}
+
+#filter3 {
+    grid-area: filter3;
+}
+.filter-controls {
+    display: grid;
+    grid-template-rows: 2;
+    grid-template-columns: auto auto auto ;
+    grid-template-areas: 
+    "freq gain q"
+    "band band rolloff";
+}
+.filter-controls  button:focus, .filter-controls  button:visited{
+    background-color: rgb(112, 112, 112);
+    color: rgb(175, 175, 175);
+    border-color: rgb(112, 112, 112);
+}
+
+.filter-freq-knob {
+    grid-area: freq;
+    justify-self: center; 
+}
+
+.filter-gain-knob {
+    grid-area: gain;
+    justify-self: center; 
+}
+
+.filter-q-knob {
+    grid-area: q;
+    justify-self: center; 
+}
+
+.filter-bandtype {
+    grid-area: band;
+    justify-self: center; 
+}
+
+.filter-rolloff {
+    grid-area: rolloff;
+    justify-self: center; 
+}
+/***********************************************************************************
+*******************************LFO Styling******************************************
+************************************************************************************/
+.lfo-module {
+    grid-area: lfo;
+}
+.lfo-controls{
+    display: grid;
+    grid-template-rows: 2;
+    grid-template-columns: auto auto;
+    grid-template-areas: 
+    "freq intensity"
+    "type routing";
+}
+
+.lfo-controls  button:focus, .lfo-controls  button:visited{
+    background-color: rgb(112, 112, 112);
+    color: rgb(175, 175, 175);
+    border-color: rgb(112, 112, 112);
+}
+
+.lfo-frequency{
+    grid-area: freq;
+    justify-self: center; 
+}
+
+.lfo-intensity{
+    grid-area: intensity;
+    justify-self: center; 
+}
+
+.lfo-wavetype{
+    grid-area: type;
+    justify-self: center; 
+}
+
+.lfo-routing{
+    grid-area: routing;
+    justify-self: center; 
+}
+
+
+
+
+/***********************************************************************************
+*******************************Master Styling***************************************
+************************************************************************************/
+.master-module {
+    grid-area: master;
+    display: grid;
+    grid-template-rows: 2;
+    grid-template-columns: auto;
+    grid-template-areas: 
+    "heading"
+    "vol";
+}
+
+.master-heading {
+    grid-area: heading;
+    justify-self: center; 
+}
+
+.master-volume-knob {
+    grid-area: vol;
+    justify-self: center; 
+}
+
+
+
+

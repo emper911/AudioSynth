@@ -7,19 +7,19 @@ class MasterModule extends Component {
     // }
     render(){
         return (
-            <div className="global-module">
-                <div className="global-heading">
+            <div className="master-module module">
+                <div className="master-heading">
                     <h3>Master</h3>
                 </div>
-                <div className="global-knobs knob-component">
+                <div className="master-volume-knob">
                     <h4>Volume:</h4>
                     <Knob
                         id="master"
                         className="VolumeKnob"
                         min={-50}
-                        max={10}
+                        max={50}
                         step={0.1}
-                        value={-10}
+                        value={0}
                         onChange={this.props.masterHandler}
                     />
                 </div>

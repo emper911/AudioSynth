@@ -13,9 +13,9 @@ class OscillatorModule extends Component {
     
     render(){
         return(
-            <div className="oscillator-module" id={this.props.id}>
+            <div className="oscillator-module module" id={this.props.id}>
                 <h3>Oscillator</h3>
-                <div className="oscillators-group">
+                <div className="oscillator-group">
                     <OscillatorRender
                         id={"osc1"}
                         oscHandler={this.props.oscHandler}
@@ -48,7 +48,7 @@ function OscillatorRender(props){
                 <Knob
                         id={props.id}
                         className="detune"
-                        min={0}
+                        min={-100}
                         max={100}
                         value={0}
                         onChange={props.oscHandler}
@@ -57,10 +57,10 @@ function OscillatorRender(props){
             <div className="oscillator-waveform">
                 <h4>Wave:</h4>
                 <div className="oscillator-waveform-buttons"> 
-                    <button onClick={() => props.oscHandler({'id' : props.id, 'param':'type', 'value': 'sine'})}>Sine</button>
-                    <button onClick={() => props.oscHandler({'id' : props.id, 'param':'type', 'value': 'square'})}>Square</button>
+                    <button onClick={() => props.oscHandler({'id' : props.id, 'param':'type', 'value': 'sine'})}>Sin</button>
+                    <button onClick={() => props.oscHandler({'id' : props.id, 'param':'type', 'value': 'square'})}>Sqre</button>
                     <button onClick={() => props.oscHandler({'id' : props.id, 'param':'type', 'value': 'sawtooth'})}>Saw</button>
-                    <button onClick={() => props.oscHandler({'id' : props.id, 'param':'type', 'value': 'triangle'})}>Triangle</button>
+                    <button onClick={() => props.oscHandler({'id' : props.id, 'param':'type', 'value': 'triangle'})}>Tri</button>
                 </div>
             </div>
         </div>

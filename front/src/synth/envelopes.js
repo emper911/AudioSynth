@@ -7,7 +7,7 @@ class EnvelopeModule extends Component{
     render(){
 
         return (
-            <div className="envelope-modules">
+            <div className="envelope-module ">
                 <Envelope
                     id="envelope"
                     envHandler={this.props.envHandler}
@@ -28,7 +28,7 @@ function Envelope(props){
     */
 
     return (
-        <div className="envelope-controls">
+        <div className="envelope-controls module" id={props.id}>
             <h3>{(props.id === "envelope") ? 'Envelope' : 'Filter Envelope'}</h3>
             <div className="envelope-knobs">
                 <div className="envelope-attack-knob knob-component">
@@ -36,9 +36,10 @@ function Envelope(props){
                     <Knob
                         id={props.id}
                         className="attack"
-                        min={0}
-                        max={100}
-                        value={10}
+                        min={0.01}
+                        max={2}
+                        value={0.1}
+                        step={0.1}
                         onChange={props.envHandler}
                         />
                 </div>
@@ -47,9 +48,10 @@ function Envelope(props){
                     <Knob
                         id={props.id}
                         className="decay"
-                        min={0}
-                        max={100}
-                        value={10}
+                        min={0.01}
+                        max={1}
+                        value={0.1}
+                        step={0.01}
                         onChange={props.envHandler}
                         />
                 </div>
@@ -58,7 +60,7 @@ function Envelope(props){
                     <Knob
                         id={props.id}
                         className="sustain"
-                        min={0}
+                        min={0.01}
                         max={1}
                         step={0.01}
                         value={0.5}
@@ -70,9 +72,10 @@ function Envelope(props){
                     <Knob
                         id={props.id}
                         className="release"
-                        min={0}
-                        max={100}
-                        value={10}
+                        min={0.01}
+                        max={5}
+                        value={0.1}
+                        step={0.1}
                         onChange={props.envHandler}
                     />
                 </div>
