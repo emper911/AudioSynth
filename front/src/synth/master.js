@@ -16,10 +16,10 @@ class MasterModule extends Component {
                     <Knob
                         id="master"
                         className="VolumeKnob"
-                        min={-50}
-                        max={50}
+                        min={0}
+                        max={10}
                         step={0.1}
-                        value={0}
+                        value={5}
                         onChange={this.props.masterHandler}
                     />
                 </div>

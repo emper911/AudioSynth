@@ -37,8 +37,8 @@ function Envelope(props){
                         id={props.id}
                         className="attack"
                         min={0.01}
-                        max={2}
-                        value={0.1}
+                        max={10}
+                        value={0.01}
                         step={0.1}
                         onChange={props.envHandler}
                         />
@@ -49,8 +49,8 @@ function Envelope(props){
                         id={props.id}
                         className="decay"
                         min={0.01}
-                        max={1}
-                        value={0.1}
+                        max={5}
+                        value={0.01}
                         step={0.01}
                         onChange={props.envHandler}
                         />
@@ -60,7 +60,7 @@ function Envelope(props){
                     <Knob
                         id={props.id}
                         className="sustain"
-                        min={0.01}
+                        min={0}
                         max={1}
                         step={0.01}
                         value={0.5}
@@ -73,7 +73,7 @@ function Envelope(props){
                         id={props.id}
                         className="release"
                         min={0.01}
-                        max={5}
+                        max={10}
                         value={0.1}
                         step={0.1}
                         onChange={props.envHandler}

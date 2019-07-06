@@ -59,8 +59,8 @@ function Filter(props){
                         id={props.id}
                         className="Q"
                         min={0}
-                        max={1}
-                        value={0.01}
+                        max={2}
+                        value={0.3}
                         step={0.01}
                         onChange={props.filterHandler}
                     />

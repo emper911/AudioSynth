@@ -11,6 +11,7 @@ import FilterModule from './filters';
 import LfoModule from './lfos';
 import MasterModule from './master';
 
+const map = (value, x1, y1, x2, y2) => (value - x1) * (y2 - x2) / (y1 - x1) + x2;
 
 class Synthesizer extends Component{
     //Synthesizer class will hold all synth modules together
@@ -51,13 +52,14 @@ class Synthesizer extends Component{
     initPolySynth() {
         this.PolySynth = new Tone.PolySynth(12, Tone.MonoSynth);
         this.PolySynth.set({
+            "volume": -25,
             "frequency": 440,
             "detune": 0,
             "oscillator": {
                 "type": "sawtooth"
             },
             "filter": {
-                "Q": 0,
+                "Q": 0.3,
                 "type": "allpass"
             },
             "envelope": {
@@ -76,11 +78,12 @@ class Synthesizer extends Component{
         });
         this.lfo1 = new Tone.LFO({
             "type": "sine",
-            "min": -1200,
-            "max": 1200,
-            "frequency": 400,
-            "amplitude": 1,
+            "min": 200,
+            "max": 500,
+            "frequency": 100,
+            "amplitude": 100,
         });
+        // console.log(map(5, 0, 10, -120, 0))
         // this.lfo1.connect(this.PolySynth.detune);
 
 
@@ -111,8 +114,8 @@ class Synthesizer extends Component{
 ****************************************Synth Component Handlers*************************************
 *******************************************************************************************/
     oscHandler(update){
-        //Handles user input from the oscillator component
         /*
+        Handles user input from the oscillator component.
         Must use weird syntax to represent parameter changes properly.
         The below is the same representation as the code:
 
@@ -148,10 +151,6 @@ class Synthesizer extends Component{
             else {
                 this.filter2[update.param].value = update.value;
             }
-            // let filterParam = {};
-            // filterParam["filter"] = {};
-            // filterParam["filter"][update.param] = update.value; //class="filterattribute"
-            // this.PolySynth.set(filterParam); 
         }
         else if(update.id === "Filter2"){
             if (update.param === "type" || update.param === "rolloff"){
@@ -174,6 +173,7 @@ class Synthesizer extends Component{
         if (update.param === "frequency" || update.param === "amplitude"){
             this.lfo1[update.param].value = update.value;
         }
+
         else if (update.param === "routing"){
             
             if (update.value === "pitch" && this.prevLfo1 !== "pitch"){
@@ -181,20 +181,26 @@ class Synthesizer extends Component{
                 this.lfo1.connect(this.PolySynth.detune);
                 this.prevLfo1 = "pitch";
             }
+
             else if (update.value === "cutoff" && this.prevLfo1 !== "cutoff") {
                 this.lfo1.disconnect();
                 this.lfo1.fan(this.filter1.frequency, this.filter2.frequency, this.filter3.frequency)
                 this.prevLfo1 = "cutoff";
             }
-            // else if (update.value === "volume") {
-            //     this.PolySynth.
-            // }
         }
-        // console.log(update+this.prevLfo1);
+
+        else if (update.param === "type"){
+            this.lfo1.type = update.value;
+        }
+
+        console.log(update);
     }
 
+
     masterHandler(update){
-        this.PolySynth.set("volume", update.value);
+        let vol = map(update.value, 0, 10, -80, 0);
+        this.PolySynth.set("volume", vol);
+
     }
 
 
@@ -207,7 +213,7 @@ class Synthesizer extends Component{
     MidiHandler(data){
         //handles midi input data sent from the midi controller component
         if (data.status === "on"){
-            this.PolySynth.triggerAttack(data.note,undefined, data.velocity);
+            this.PolySynth.triggerAttack(data.note, undefined, data.velocity);
             this.filterEnv.triggerAttack(undefined, data.velocity);
         }
         else if (data.status === "off"){
@@ -220,7 +226,7 @@ class Synthesizer extends Component{
         //used for musical typing on a keyboard
         var pitch = "";
         var valid = false; //within defined mapping from keyboard to pitch
-        switch(note.key){ //maps keyboard values to a pitch
+        switch (note.key.toLowerCase()){ //maps keyboard values to a pitch
             case "a":
                 pitch = "c" + this.octave;
                 valid = true;
