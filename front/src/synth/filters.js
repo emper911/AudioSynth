@@ -35,7 +35,7 @@ function Filter(props){
                     <Knob
                         id={props.id}
                         className="frequency"
-                        min={50}
+                        min={20}
                         max={10000}
                         value={200}
                         onChange={props.filterHandler}

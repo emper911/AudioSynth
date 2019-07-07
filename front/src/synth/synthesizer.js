@@ -63,19 +63,25 @@ class Synthesizer extends Component{
                 "type": "allpass"
             },
             "envelope": {
-                "attack": 0.1,
-                "releasse": 0.1
+                "attack": 0.02,
+                "decay": 0.02,
+                "sustain": 1,
+                "releasse": 0.02,
             },
             "filterEnvelope": {
-                "attack": 0.1,
-                "decay": 0.1,
-                "sustain": 0,
-                "release": 0.1,
+                "attack": 0.02,
+                "decay": 0.02,
+                "sustain": 1,
+                "release": 0.02,
                 "baseFrequency": 200,
                 "octaves": 7,
                 "exponent": 0
             }
         });
+
+        this.osc1 = new Tone.FatOscillator();
+        this.osc2 = new Tone.FatOscillator();
+
         this.lfo1 = new Tone.LFO({
             "type": "sine",
             "min": 200,

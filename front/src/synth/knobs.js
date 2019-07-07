@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 
 
 class Knob extends Component{
-    // constructor(props){
-    //     super(props);
-
-    // }
 
     componentDidMount(){
         this.initKnob();
