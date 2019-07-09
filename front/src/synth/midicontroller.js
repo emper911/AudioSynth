@@ -11,7 +11,7 @@ class MidiController extends Component{
     initMidi(){
         //rename for ease of use
         var WebMidi = window.WebMidi;
-        //due to scoping of 'this' keyword easier to save in variable
+        //due to scoping of 'this' keyword easier to save external handler in variable
         var MidiOutput = this.props.MidiOutput;
         //tries to connect
         WebMidi.enable(function (err){
@@ -20,9 +20,9 @@ class MidiController extends Component{
             } 
             else {
                 // Retrieve an input by name, id or index
-                if (WebMidi.inputs.length > 0){
+                if (WebMidi.inputs.length > 0){//If a valid midi device detected, will be greater than 0
                     // console.log(WebMidi.inputs);
-                    var input = WebMidi.getInputByName(WebMidi.inputs[0].name);
+                    var input = WebMidi.getInputByName(WebMidi.inputs[0].name); //picks the first midi controller
                     // this.refs.status.text = "Midi is Connected";
 
                     // Listen for a 'note on' message on all channels

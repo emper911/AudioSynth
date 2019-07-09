@@ -49,7 +49,7 @@ function Envelope(props){
                         id={props.id}
                         className="decay"
                         min={0.01}
-                        max={5}
+                        max={10}
                         value={0.01}
                         step={0.01}
                         onChange={props.envHandler}
