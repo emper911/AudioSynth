@@ -1,415 +1,276 @@
-html{
-  /* overflow: hidden; */
-  height: 100%;
-}
-body{
-  padding: 0;
-  height: 100%;
-  margin-right: 3%;
-  margin-left: 2%;
-}
-#root, .App {
-  margin: 0;
-  height: 100%;
-  width: 100%;
-  padding: 0;
-}
-
-h1, h3{
-  text-align: center;
-}
 /***********************************************************************************
-*******************************Knob Styling*****************************************
+*******************************Global Element Styling*******************************
 ************************************************************************************/
-
-/* body {
-  margin: 0;
-  background-image: radial-gradient(30% 50%, #555 6%, #333 90%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+html, body, #root, .app{
+   margin: 0px;
+   height: 100%;
+   width: 100%;
+   /* position: fixed; */
+}
+/* .app{
+    height: 98%;
 } */
+body {
+    background-color: rgb(22, 22, 22);
+    color: rgb(230, 230, 230);
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-.knob {
-  display: flex;
-  position: relative;
+h1, h2, h3, h4, h5 {
+    text-align: center;
 }
-.knob .ticks {
-  position: absolute;
+
+button{
+    background-color: rgb(58, 58, 58);
+    color: rgb(175, 175, 175);
+    border-color: rgb(58, 58, 58);
 }
-.knob .ticks .tick {
-  position: absolute;
-  background: black;
-  box-shadow: inset 0 0 0 0 black;
-  width: 3px;
-  transition: box-shadow 0.5s;
+/* :active */
+
+
+
+/***********************************************************************************
+*******************************Synthesizer Styling**********************************
+************************************************************************************/
+.poly-synth {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 20% 20% 20% 20% 20%;
+    grid-gap: 10px 10px;
+    grid-template-areas: 
+    ". . midi . ."
+    "oscillator oscillator oscillator visual visual" 
+    "envelope envelope envelope lfo master"
+    "envelope envelope envelope . ."
+    "filter filter filter filter filter";
 }
-.knob .ticks .tick.active {
-  box-shadow: inset 0 0 5px 2px rgb(40, 124, 207), 0 0 0 1px rgb(40, 124, 207);
+.module{
+    border-radius: 1%;
+    padding: 2%;
+    border: 1px solid rgb(58, 58, 58);
+    box-shadow: 3px 4px 3px 1px rgb(37, 37, 37);
 }
-.knob.outer {
-  border-radius: 50%;
-  border: 1px solid #222;
-  /* border-bottom: 5px solid #222; */
-  background-image: radial-gradient(100% 70%, #666 6%, #333 90%);
-  /* box-shadow: 0 5px 15px 2px black, 0 0 5px 3px black, 0 0 0 12px #444; */
-}
-.knob.inner {
-  border-radius: 50%;
-}
-.knob.inner .grip {
-  position: absolute;
-  width: 5%;
-  height: 5%;
-  bottom: 2%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: #509eec;
-  box-shadow: 0 0 3px 1px black;
+/***********************************************************************************
+*******************************Midi-control Styling*********************************
+************************************************************************************/
+.midi-controls {
+    grid-area: midi;
+
 }
 
 /***********************************************************************************
-******************************Synthesizer Styling***********************************
+*******************************Audio Visual Styling*********************************
 ************************************************************************************/
-.synthesizer{
-  height: 100%;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 25% 25% 25% 25%;
-  grid-template-rows: 25% 25% 25% 25%;
-  grid-template-areas:
-   "oscModule oscModule audioVisual audioVisual"
-   "envelope envelope audioVisual audioVisual"
-   "filter lfo lofiMode global"
-   "keyboard keyboard keyboard keyboard";
-  /* grid-column-gap: 1%; */
-  grid-row-gap: 1%;
-  grid-column-gap: 0.5%;
-  
-}
-/***********************************************************************************
-******************************OscillatorModule Styling************************************
-************************************************************************************/
-.oscillator-module{
-  grid-area: oscModule;
-  display: grid;
-  grid-template-columns:  50% 50%;
-  grid-template-rows: 25% 25% 25% 25%;
-  grid-template-areas:
-   "oscillator1 threemixer"
-   "oscillator2 threemixer"
-   "oscillator3 threemixer"
-   ". voices";
-  border: 2px solid rgb(114, 114, 114);
-}
-/* .oscillators-group{
-  grid-area: oscillators;
-} */
-#osc1{
-  grid-area: oscillator1;
-  justify-self: center;
-}
-#osc2{
-  grid-area: oscillator2;
-  justify-self: center;
-}
-#osc3{
-  grid-area: oscillator3;
-  justify-self: center;
+.audio-visualizer {
+    grid-area: visual;
+
 }
 
-.three-mixer{
-  grid-area: threemixer;
+
+/***********************************************************************************
+*******************************Oscillator Styling***********************************
+************************************************************************************/
+
+.oscillator-module {
+    grid-area: oscillator;
 }
-.voices{
-  grid-area: voices;
+
+.oscillator-controls {
+    display: grid;
+    grid-template-rows: 1;
+    grid-template-columns: auto auto;
+    grid-template-areas: 
+    "detune waveform";
+
 }
-/******************************Oscillator Styling************************************/
-.oscillator{
-      display: flex;
-      flex-direction: row;
-      justify-content: space-evenly;
-      padding-bottom: 5%;
-      padding-top: 2%;
+.oscillator-detune {
+    grid-area: detune;
+    justify-self: center; 
+}
+.oscillator-waveform {
+    grid-area: waveform;
+    justify-self: center; 
+}
+.oscillator-waveform button:focus, .oscillator-waveform button:visited{
+    background-color: rgb(112, 112, 112);
+    color: rgb(175, 175, 175);
+    border-color: rgb(112, 112, 112);
 }
 
 /***********************************************************************************
-******************************Wave Visualizer Styling*******************************
+*******************************Envelope Styling*************************************
 ************************************************************************************/
-.wave-visualizer-module{
-  grid-area: audioVisual;
-  border: 2px solid rgb(114, 114, 114);
+.envelope-module {
+    grid-area: envelope;
+    display: grid;
+    grid-template-rows: 2;
+    grid-template-columns: auto ;
+    grid-template-areas: 
+    "ampEnv"
+    "filterEnv";
 }
 
-/***********************************************************************************
-******************************Envelope Styling**************************************
-************************************************************************************/
-.envelope-module{
-  grid-area: envelope;
-  justify-self: stretch;
-  border: 2px solid rgb(83, 83, 83);
+#envelope {
+    grid-area: ampEnv;
 }
 
-.envelope-headings{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  padding-left: 2%;
+#filterEnvelope {
+    grid-area: filterEnv;
 }
 
 .envelope-knobs{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
+    display: grid;
+    grid-template-rows: 1;
+    grid-template-columns: auto auto auto auto;
+    grid-template-areas: 
+    "attack decay sustain release";
+}
+.envelope-attack-knob{
+    grid-area: attack;
+    justify-self: center; 
+}
+.envelope-decay-knob{
+    grid-area: decay;
+    justify-self: center; 
+}
+.envelope-sustain-knob{
+    grid-area: sustain;
+    justify-self: center; 
+}
+.envelope-release-knob{
+    grid-area: release;
+    justify-self: center; 
 }
 
 /***********************************************************************************
-******************************Filter Styling****************************************
+*******************************Filter Styling***************************************
 ************************************************************************************/
-.filter-module{
-  grid-area: filter;
-  border: 2px solid rgb(114, 114, 114);
+.filter-module {
+    grid-area: filter;
+    display: grid;
+    grid-template-rows: 1;
+    grid-template-columns: auto auto auto ;
+    grid-template-areas: 
+    "filter1 filter2 filter3";
+
+    /* padding-bottom: 2%; */
 }
+#filter1 { 
+    grid-area: filter1;
+}
+
+#filter2 {
+    grid-area: filter2;
+}
+
+#filter3 {
+    grid-area: filter3;
+}
+.filter-controls {
+    display: grid;
+    grid-template-rows: 2;
+    grid-template-columns: auto auto auto ;
+    grid-template-areas: 
+    "freq gain q"
+    "band band rolloff";
+}
+.filter-controls  button:focus, .filter-controls  button:visited{
+    background-color: rgb(112, 112, 112);
+    color: rgb(175, 175, 175);
+    border-color: rgb(112, 112, 112);
+}
+
+.filter-freq-knob {
+    grid-area: freq;
+    justify-self: center; 
+}
+
+.filter-gain-knob {
+    grid-area: gain;
+    justify-self: center; 
+}
+
+.filter-q-knob {
+    grid-area: q;
+    justify-self: center; 
+}
+
+.filter-bandtype {
+    grid-area: band;
+    justify-self: center; 
+}
+
+.filter-rolloff {
+    grid-area: rolloff;
+    justify-self: center; 
+}
+/***********************************************************************************
+*******************************LFO Styling******************************************
+************************************************************************************/
+.lfo-module {
+    grid-area: lfo;
+}
+.lfo-controls{
+    display: grid;
+    grid-template-rows: 2;
+    grid-template-columns: auto auto;
+    grid-template-areas: 
+    "freq intensity"
+    "type routing";
+}
+
+.lfo-controls  button:focus, .lfo-controls  button:visited{
+    background-color: rgb(112, 112, 112);
+    color: rgb(175, 175, 175);
+    border-color: rgb(112, 112, 112);
+}
+
+.lfo-frequency{
+    grid-area: freq;
+    justify-self: center; 
+}
+
+.lfo-intensity{
+    grid-area: intensity;
+    justify-self: center; 
+}
+
+.lfo-wavetype{
+    grid-area: type;
+    justify-self: center; 
+}
+
+.lfo-routing{
+    grid-area: routing;
+    justify-self: center; 
+}
+
+
+
 
 /***********************************************************************************
-******************************Lfo Styling*******************************************
+*******************************Master Styling***************************************
 ************************************************************************************/
-.lfo-module{
-  grid-area: lfo;
-  border: 2px solid rgb(114, 114, 114);
-  display: grid;
-  grid-template-columns: 33% 33% 33%;
-  grid-template-rows: 33% 33% 33%;
-  grid-template-areas:
-  ". heading ."
-  "lfo-wave-group lfo-wave-group lfo-wave-group"
-  "lfo-routing-group lfo-routing-group lfo-routing-group";
+.master-module {
+    grid-area: master;
+    display: grid;
+    grid-template-rows: 2;
+    grid-template-columns: auto;
+    grid-template-areas: 
+    "heading"
+    "vol";
 }
 
-.lfo-module > h3{
-  grid-area: heading;
+.master-heading {
+    grid-area: heading;
+    justify-self: center; 
 }
 
-.lfo-group{
-  
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-
-}
-.lfo-wave-group{
-  grid-area: lfo-wave-group;
-}
-
-.lfo-routing-group{
-  grid-area: lfo-routing-group;
-}
-
-/***********************************************************************************
-******************************Lofi Styling******************************************
-************************************************************************************/
-.lofi-module{
-  grid-area: lofiMode;
-  border: 2px solid rgb(114, 114, 114);
-  display: grid;
-  grid-template-columns: 33% 33% 33%;
-  grid-template-rows: 33% 33% 33%;
-  grid-template-areas:
-  "heading heading heading"
-  ". power .";
-}
-.lofi-heading{
-  grid-area: heading;
-
-}
-.lofi-power{
-  grid-area: power;
-  justify-self: stretch;
+.master-volume-knob {
+    grid-area: vol;
+    justify-self: center; 
 }
 
 
-/***********************************************************************************
-******************************Global Styling****************************************
-************************************************************************************/
-.global-module{
-  grid-area: global;
-  border: 2px solid rgb(114, 114, 114);
-  justify-content: stretch;
-  display: grid;
-  grid-template-columns: 33% 33% 33%;
-  grid-template-rows: 40% 60%;
-  grid-template-areas:
-  "heading heading heading"
-  ". knobs .";
-}
-
-.global-heading{
-  grid-area: heading;
-  justify-self: center;
-}
-
-.global-knobs{
-  grid-area: knobs;
-  justify-self: center;
-}
-
-
-/***********************************************************************************
-******************************Keyboard Styling**************************************
-************************************************************************************/
-.keyboard-module{
-  grid-area: keyboard;
-  border: 2px solid rgb(114, 114, 114);
-  display: grid;
-  grid-template-columns: 10% 40% 40% 10%;
-  grid-template-rows: 20% 80%;
-  grid-template-areas:
-  ". heading heading ."
-  "keyboard-modulation keyboard-keys keyboard-keys .";
-  grid-row-gap: 1%;
-  grid-column-gap: 0.5%;
-}
-
-.keyboard-heading{
-  grid-area: heading;
-  justify-self: center;
-}
-
-.keyboard-modulation{
-  border: 2px solid rgb(114, 114, 114);
-  grid-area: keyboard-modulation;
-}
-
-.keyboard-keys{
-  border: 2px solid rgb(114, 114, 114);
-  grid-area: keyboard-keys;
-  justify-self: stretch;
-  display: grid;
-  grid-template-columns: 50%;
-  grid-template-rows: 50%;
-  grid-template-areas:
-  "black-keys black-keys"
-  "white-keys white-keys";
-  align-items: stretch;
-}
-/* .keyboard-black-keys{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-   ". cS0 . dS0 . . fS0 . gS0 . aS0 . . cS1 . d#1 . . fS1 . gS1 . aS1 ."
-  "c0 . d0 . e0 f0 . g0 . a0 . b0 c1 . d1 . e1 f1 . g1 . a1 . b1 c2"; 
-} */
-.keyboard-black-keys > button{
-  height: 100%;
-  width: 100%;
-  padding: 0;
-  border: 1px solid black;
-  background-color: black;
-}
-.keyboard-white-keys > button{
-  height: 100%;
-  width: 100%;
-  padding: 0;
-  border: 1px solid black;
-  background-color: white;
-}
-  
-
-.keyboard-black-keys{
-  grid-area: black-keys;
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-areas:
-  ". cS0 . dS0 . . fS0 . gS0 . aS0 . . cS1 . dS1 . . fS1 . gS1 . aS1 .";
-}
-
-.keyboard-white-keys{
-  grid-area: white-keys;
-  display: grid;
-  grid-template-columns: repeat(15, 6.57% [col-start]);
-  grid-column-gap: 0.1%;
-  grid-template-areas:
-  "c0 d0 e0 f0 g0 a0 b0 c1 d1 e1 f1 g1 a1 b1 c2";
-}
-
-
-
-.c0{
-  grid-area: c0;
-}
-.cS0{
-  grid-area: cS0;
-}
-.d0{
-  grid-area: d0;
-}
-.dS0{
-  grid-area: dS0;
-}
-.e0{
-  grid-area: e0;
-}
-.f0{
-  grid-area: f0;
-}
-.fS0{
-  grid-area: fS0;
-}
-.g0{
-  grid-area: g0;
-}
-.gS0{
-  grid-area: gS0;
-}
-.a0{
-  grid-area: a0;
-}
-.aS0{
-  grid-area: aS0;
-}
-.b0{
-  grid-area: b0;
-}
-
-.c1{
-  grid-area: c1;
-}
-.cS1{
-  grid-area: cS1;
-}
-.d1{
-  grid-area: d1;
-}
-.dS1{
-  grid-area: dS1;
-}
-.e1{
-  grid-area: e1;
-}
-.f1{
-  grid-area: f1;
-}
-.fS1{
-  grid-area: fS1;
-}
-.g1{
-  grid-area: g1;
-}
-.gS1{
-  grid-area: gS1;
-}
-.a1{
-  grid-area: a1;
-}
-.aS1{
-  grid-area: aS1;
-}
-.b1{
-  grid-area: b1;
-}
-.c2{
-  grid-area: c2;
-}
 
 
