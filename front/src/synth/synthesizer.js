@@ -97,10 +97,9 @@ class Synthesizer extends Component{
         //LFO component initialization
         this.lfo1 = new Tone.LFO({
             "type": "sine",
-            "min": 200,
+            "min": 0,
             "max": 500,
-            "frequency": 100, 
-            "amplitude": 100,
+            "frequency": 0.5, 
         });
 
         //Filter envelop connects equally to all three envelopes
