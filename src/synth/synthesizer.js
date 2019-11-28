@@ -28,8 +28,9 @@ class Synthesizer extends Component{
         this.musicalTypingTrigger = this.musicalTypingTrigger.bind(this);
         //TODO - output handler for sound visualization
 
-
     }
+
+
 /*******************************************************************************************
 **********************************Component/Synth Initialization****************************
 ********************************************************************************************/
@@ -50,8 +51,9 @@ class Synthesizer extends Component{
         this.PolySynth.disconnect();
     }
 
-    /*****************************Polysynth Initialization**********************************/
+/*****************************Polysynth Initialization**********************************/
     initPolySynth() {
+        /********************Declaring the tone.js modules*********************/
         this.PolySynth = new Tone.PolySynth(12, Tone.MonoSynth);
         //sets default parameters at the start of the webpage.
         this.PolySynth.set({
@@ -102,6 +104,15 @@ class Synthesizer extends Component{
             "frequency": 0.5, 
         });
 
+        this.freeverb = new Tone.Freeverb({
+            "roomSize": 0.5,
+            "dampening":2000,
+            "wet": 0.5
+            }
+        ).toMaster();
+
+        /**************************Connecting modules together *********************/
+
         //Filter envelop connects equally to all three envelopes
         this.filterEnv.fan(this.filter1.frequency, this.filter2.frequency, this.filter3.frequency);
         
@@ -113,10 +124,8 @@ class Synthesizer extends Component{
         this.PolySynth.connect(this.filter1);
         this.filter1.connect(this.filter2);
         this.filter2.connect(this.filter3);
-        this.filter3.toMaster(); //last component out
+        this.filter3.connect(this.freeverb);
 
-
-        console.log(this['filter1']);
     }
 
     

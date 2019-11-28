@@ -26,6 +26,7 @@ class FilterModule extends Component {
 }
 
 function Filter(props){
+    
     return (
         <div className= "filter-group module">
             <h3>{props.id}</h3>
@@ -35,9 +36,10 @@ function Filter(props){
                     <Knob
                         id={props.id}
                         className="frequency"
-                        min={10}
-                        max={20000}
+                        min={0}
+                        max={10000}
                         value={200}
+                        step={1}
                         onChange={props.filterHandler}
                     />
                 </div>
@@ -72,10 +74,10 @@ function Filter(props){
                         <button onClick={() => props.filterHandler({'id' : props.id, 'param':'type', 'value' : 'highpass'})}>HP</button>
                         <button onClick={() => props.filterHandler({'id' : props.id, 'param':'type', 'value' : 'lowpass'})}>LP</button>
                         <button onClick={() => props.filterHandler({'id' : props.id, 'param':'type', 'value' : 'bandpass'})}>BP</button>
-                        <button onClick={() => props.filterHandler({'id' : props.id, 'param':'type', 'value' : 'highshelf'})}>HS</button>
-                        <button onClick={() => props.filterHandler({'id' : props.id, 'param':'type', 'value' : 'lowshelf'})}>LS</button>
-                        <button onClick={() => props.filterHandler({'id' : props.id, 'param':'type', 'value' : 'peaking'})}>Peak</button>
-                        <button onClick={() => props.filterHandler({'id' : props.id, 'param':'type', 'value' : 'notch'})}>Notch</button>
+                        {/* <button onClick={() => props.filterHandler({'id' : props.id, 'param':'type', 'value' : 'highshelf'})}>HS</button> */}
+                        {/* <button onClick={() => props.filterHandler({'id' : props.id, 'param':'type', 'value' : 'lowshelf'})}>LS</button> */}
+                        {/* <button onClick={() => props.filterHandler({'id' : props.id, 'param':'type', 'value' : 'peaking'})}>Peak</button> */}
+                        {/* <button onClick={() => props.filterHandler({'id' : props.id, 'param':'type', 'value' : 'notch'})}>Notch</button> */}
                     </div>
                 </div>
     
